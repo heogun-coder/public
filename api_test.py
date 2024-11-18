@@ -66,5 +66,9 @@ def get_weather(city):
 
 # 프로그램 실행
 if __name__ == "__main__":
-    city = input("도시 이름을 입력하세요 (예: Seoul): ")
-    get_weather(city)
+    while True:
+        city = input("\n도시 이름을 입력하세요 (종료하려면 'stop' 입력): ")
+        if city.lower() == "stop":
+            print("프로그램을 종료합니다.")
+            break
+        get_weather(city)
