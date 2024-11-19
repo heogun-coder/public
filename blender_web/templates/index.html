@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>이미지 블렌더</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>이미지 블렌더</h1>
+        <div class="upload-container">
+            <div class="upload-box">
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="image-inputs">
+                        <div class="input-group">
+                            <label for="image1">첫 번째 이미지</label>
+                            <input type="file" id="image1" name="image1" accept="image/*" required>
+                            <div class="preview" id="preview1"></div>
+                        </div>
+                        <div class="input-group">
+                            <label for="image2">두 번째 이미지</label>
+                            <input type="file" id="image2" name="image2" accept="image/*" required>
+                            <div class="preview" id="preview2"></div>
+                        </div>
+                    </div>
+                    <div class="slider-container">
+                        <label for="alpha">블렌딩 비율: <span id="alphaValue">0.5</span></label>
+                        <input type="range" id="alpha" name="alpha" min="0" max="1" step="0.1" value="0.5">
+                    </div>
+                    <button type="submit" class="blend-button">이미지 블렌드</button>
+                </form>
+            </div>
+            <div class="result-container">
+                <h2>결과</h2>
+                <div id="resultImage"></div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
