@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>얼굴 교체 프로그램</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>얼굴 교체 프로그램</h1>
+        
+        <div class="upload-container">
+            <div class="source-section">
+                <h2>원본 얼굴 영상</h2>
+                <select id="sourceType" onchange="toggleSourceInput()">
+                    <option value="file">파일 업로드</option>
+                    <option value="youtube">YouTube URL</option>
+                </select>
+                <div id="sourceFileInput">
+                    <input type="file" accept="video/*" id="sourceFile">
+                </div>
+                <div id="sourceUrlInput" style="display: none;">
+                    <input type="text" placeholder="YouTube URL" id="sourceUrl">
+                </div>
+                <video id="sourcePreview" controls style="display: none;"></video>
+            </div>
+
+            <div class="target-section">
+                <h2>타겟 영상</h2>
+                <select id="targetType" onchange="toggleTargetInput()">
+                    <option value="file">파일 업로드</option>
+                    <option value="youtube">YouTube URL</option>
+                </select>
+                <div id="targetFileInput">
+                    <input type="file" accept="video/*" id="targetFile">
+                </div>
+                <div id="targetUrlInput" style="display: none;">
+                    <input type="text" placeholder="YouTube URL" id="targetUrl">
+                </div>
+                <video id="targetPreview" controls style="display: none;"></video>
+            </div>
+
+            <button id="processButton" onclick="processVideos()">처리 시작</button>
+
+            <div id="progressContainer" style="display: none;">
+                <div class="progress-bar-container">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
+                <p id="progressMessage">처리 준비 중...</p>
+            </div>
+
+            <div class="result-container">
+                <h2>결과</h2>
+                <video id="resultVideo" controls style="display: none;">
+                    <source src="" type="video/mp4">
+                </video>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
