@@ -16,7 +16,9 @@ function toggleTargetInput() {
         targetType === 'youtube' ? 'block' : 'none';
 }
 
-function processVideos() {
+function processVideos(event) {
+    event.preventDefault();
+    
     const formData = new FormData();
     
     const sourceType = document.getElementById('sourceType').value;
@@ -28,14 +30,18 @@ function processVideos() {
     if (sourceType === 'file') {
         const sourceFile = document.getElementById('sourceFile').files[0];
         if (!sourceFile) {
-            alert('원본 영상을 선택해주세요.');
+            alert('원본 영상 파일을 선택해주세요.');
             return;
         }
         formData.append('source_file', sourceFile);
     } else {
-        const sourceUrl = document.getElementById('sourceUrl').value;
+        const sourceUrl = document.getElementById('sourceUrl').value.trim();
         if (!sourceUrl) {
-            alert('원본 영상 URL을 입력해주세요.');
+            alert('원본 영상의 YouTube URL을 입력해주세요.');
+            return;
+        }
+        if (!validateYouTubeUrl(sourceUrl)) {
+            alert('올바른 YouTube URL을 입력해주세요.');
             return;
         }
         formData.append('source_url', sourceUrl);
@@ -44,14 +50,18 @@ function processVideos() {
     if (targetType === 'file') {
         const targetFile = document.getElementById('targetFile').files[0];
         if (!targetFile) {
-            alert('타겟 영상을 선택해주세요.');
+            alert('타겟 영상 파일을 선택해주세요.');
             return;
         }
         formData.append('target_file', targetFile);
     } else {
-        const targetUrl = document.getElementById('targetUrl').value;
+        const targetUrl = document.getElementById('targetUrl').value.trim();
         if (!targetUrl) {
-            alert('타겟 영상 URL을 입력해주세요.');
+            alert('타겟 영상의 YouTube URL을 입력해주세요.');
+            return;
+        }
+        if (!validateYouTubeUrl(targetUrl)) {
+            alert('올바른 YouTube URL을 입력해주세요.');
             return;
         }
         formData.append('target_url', targetUrl);
@@ -86,6 +96,11 @@ function processVideos() {
     .finally(() => {
         document.getElementById('progressContainer').style.display = 'none';
     });
+}
+
+function validateYouTubeUrl(url) {
+    const pattern = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[a-zA-Z0-9_-]{11}$/;
+    return pattern.test(url);
 }
 
 socket.on('progress_update', function(data) {
