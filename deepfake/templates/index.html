@@ -10,77 +10,54 @@
     <div class="container">
         <h1>얼굴 교체 프로그램</h1>
         
-        <form id="videoForm" onsubmit="processVideos(event)">
-            <div class="upload-container">
-                <div class="source-section">
-                    <h2>원본 얼굴 영상</h2>
-                    <div class="input-group">
-                        <label>입력 방식 선택:</label>
-                        <select name="sourceType" id="sourceType" onchange="toggleSourceInput()">
-                            <option value="file">파일 업로드</option>
-                            <option value="youtube">YouTube URL</option>
-                        </select>
-                    </div>
-                    
-                    <div id="sourceFileInput" class="input-group">
-                        <label>비디오 파일 선택:</label>
-                        <input type="file" accept="video/*" name="sourceFile" id="sourceFile">
-                    </div>
-                    
-                    <div id="sourceUrlInput" class="input-group" style="display: none;">
-                        <label>YouTube URL 입력:</label>
-                        <input type="text" name="sourceUrl" id="sourceUrl" 
-                               placeholder="예: https://www.youtube.com/watch?v=...">
-                    </div>
-                    
-                    <video id="sourcePreview" controls style="display: none;"></video>
+        <div class="upload-container">
+            <div class="source-section">
+                <h2>원본 얼굴 영상</h2>
+                <select id="sourceType" onchange="toggleSourceInput()">
+                    <option value="file">파일 업로드</option>
+                    <option value="youtube">YouTube URL</option>
+                </select>
+                <div id="sourceFileInput">
+                    <input type="file" accept="video/*" id="sourceFile">
                 </div>
-
-                <div class="target-section">
-                    <h2>타겟 영상</h2>
-                    <div class="input-group">
-                        <label>입력 방식 선택:</label>
-                        <select name="targetType" id="targetType" onchange="toggleTargetInput()">
-                            <option value="file">파일 업로드</option>
-                            <option value="youtube">YouTube URL</option>
-                        </select>
-                    </div>
-                    
-                    <div id="targetFileInput" class="input-group">
-                        <label>비디오 파일 선택:</label>
-                        <input type="file" accept="video/*" name="targetFile" id="targetFile">
-                    </div>
-                    
-                    <div id="targetUrlInput" class="input-group" style="display: none;">
-                        <label>YouTube URL 입력:</label>
-                        <input type="text" name="targetUrl" id="targetUrl" 
-                               placeholder="예: https://www.youtube.com/watch?v=...">
-                    </div>
-                    
-                    <video id="targetPreview" controls style="display: none;"></video>
-                </div>
-
-                <div class="button-container">
-                    <button type="submit" id="processButton">처리 시작</button>
-                </div>
-
-                <div id="progressContainer" style="display: none;">
-                    <div class="progress-bar-container">
-                        <div id="progressBar" class="progress-bar"></div>
-                    </div>
-                    <p id="progressMessage">처리 준비 중...</p>
-                </div>
-
-                <div class="result-container">
-                    <h2>결과</h2>
-                    <video id="resultVideo" controls style="display: none;">
-                        <source src="" type="video/mp4">
-                    </video>
+                <div id="sourceUrlInput" style="display: none;">
+                    <input type="text" id="sourceUrl" placeholder="YouTube URL을 입력하세요">
                 </div>
             </div>
-        </form>
-    </div>
 
+            <div class="target-section">
+                <h2>타겟 영상</h2>
+                <select id="targetType" onchange="toggleTargetInput()">
+                    <option value="file">파일 업로드</option>
+                    <option value="youtube">YouTube URL</option>
+                </select>
+                <div id="targetFileInput">
+                    <input type="file" accept="video/*" id="targetFile">
+                </div>
+                <div id="targetUrlInput" style="display: none;">
+                    <input type="text" id="targetUrl" placeholder="YouTube URL을 입력하세요">
+                </div>
+            </div>
+
+            <button type="button" onclick="processVideos()">처리 시작</button>
+
+            <div id="progressContainer" style="display: none;">
+                <div class="progress-bar-container">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
+                <p id="progressMessage">처리 준비 중...</p>
+                <p id="progressPercent">0%</p>
+            </div>
+
+            <div class="result-container">
+                <h2>결과</h2>
+                <video id="resultVideo" controls style="display: none;">
+                    <source src="" type="video/mp4">
+                </video>
+            </div>
+        </div>
+    </div>
+    
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

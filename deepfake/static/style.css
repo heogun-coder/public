@@ -147,3 +147,34 @@ select:focus {
     outline: none;
     box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
 }
+
+select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#progressPercent {
+    text-align: center;
+    font-weight: bold;
+    color: #4CAF50;
+    margin-top: 5px;
+}
+
+.source-section, .target-section {
+    background-color: white;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
