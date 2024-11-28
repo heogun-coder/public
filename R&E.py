@@ -43,20 +43,22 @@ def analyze_pattern(data, window=10):
         return "평소(just)"
 
 
+voltages = []
+
+
 def update(frame):
-    """애니메이션 업데이트 함수"""
-    # 센서에서 거리 측정
-    distance = sensor.distance
-    distances.append(distance)
+    voltage = sensor.distance
+
+    voltages.append(voltage)
     timestamps.append(frame)
 
     # 윈도우 크기 유지
-    if len(distances) > window_size:
-        distances.pop(0)
+    if len(voltages) > window_size:
+        voltages.pop(0)
         timestamps.pop(0)
 
     # 그래프 업데이트
-    line.set_data(range(len(distances)), distances)
+    line.set_data(range(len(voltages)), voltages)
 
     # 패턴 분석
     pattern = analyze_pattern(distances)

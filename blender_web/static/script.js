@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await fetch('/blend', {
                 method: 'POST',
-                body: formData
+                body: foramData
             });
             
             if (response.ok) {

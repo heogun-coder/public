@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, send_file, jsonify
 from PIL import Image
 import io
-import numpy as np
 import cv2
 from image_blender import FaceBlender
 
