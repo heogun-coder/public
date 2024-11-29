@@ -1,0 +1,36 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px;
+}
+
+canvas {
+    border: 2px solid #333;
+    margin: 20px 0;
+    cursor: crosshair;
+}
+
+.buttons {
+    margin: 20px 0;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#result {
+    font-size: 24px;
+    margin-top: 20px;
+}

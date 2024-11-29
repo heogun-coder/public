@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>숫자 인식 CNN</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>손글씨 숫자 인식</h1>
+        <canvas id="canvas" width="280" height="280"></canvas>
+        <div class="buttons">
+            <button onclick="clearCanvas()">지우기</button>
+            <button onclick="predict()">예측하기</button>
+        </div>
+        <div id="result">예측 결과: <span id="prediction"></span></div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
