@@ -2,6 +2,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('uploadForm');
     const alphaSlider = document.getElementById('alpha');
     const alphaValue = document.getElementById('alphaValue');
+    const resultImage = document.getElementById('resultImage');
+    const blendButton = document.querySelector('.blend-button');
+    
+    function showLoading() {
+        blendButton.disabled = true;
+        blendButton.textContent = '처리중...';
+        resultImage.innerHTML = '<div class="loading"></div>';
+    }
+    
+    function hideLoading() {
+        blendButton.disabled = false;
+        blendButton.textContent = '이미지 블렌드';
+    }
+    
+    function showError(message) {
+        resultImage.innerHTML = `<div class="error">${message}</div>`;
+    }
     
     // 이미지 미리보기 함수
     function previewImage(input, previewId) {
@@ -36,27 +53,40 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         
         const formData = new FormData();
-        formData.append('image1', document.getElementById('image1').files[0]);
-        formData.append('image2', document.getElementById('image2').files[0]);
+        const image1 = document.getElementById('image1').files[0];
+        const image2 = document.getElementById('image2').files[0];
+        
+        if (!image1 || !image2) {
+            showError('두 개의 이미지를 모두 선택해주세요.');
+            return;
+        }
+        
+        formData.append('image1', image1);
+        formData.append('image2', image2);
         formData.append('alpha', alphaSlider.value);
+        
+        showLoading();
         
         try {
             const response = await fetch('/blend', {
                 method: 'POST',
-                body: foramData
+                body: formData
             });
             
-            if (response.ok) {
-                const blob = await response.blob();
-                const imageUrl = URL.createObjectURL(blob);
-                document.getElementById('resultImage').innerHTML = 
-                    `<img src="${imageUrl}" alt="Blended Image">`;
-            } else {
-                alert('이미지 블렌딩 중 오류가 발생했습니다.');
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || '이미지 처리 중 오류가 발생했습니다.');
             }
+            
+            const blob = await response.blob();
+            const imageUrl = URL.createObjectURL(blob);
+            resultImage.innerHTML = `<img src="${imageUrl}" alt="Blended Image">`;
+            
         } catch (error) {
             console.error('Error:', error);
-            alert('서버 통신 중 오류가 발생했습니다.');
+            showError(error.message);
+        } finally {
+            hideLoading();
         }
     });
 });
