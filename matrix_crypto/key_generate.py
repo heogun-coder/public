@@ -1,4 +1,5 @@
 def generate_key(matrix_size, matrix):
+
     L = matrixify(matrix_size)
     for x in range(matrix_size):
         L[x][x] = 1
@@ -15,8 +16,11 @@ def generate_key(matrix_size, matrix):
                 L[x][y] = div
                 for z in range(y, matrix_size):
                     U[x][z] -= U[y][z] * div
+    det = 1
+    for x in range(matrix_size):
+        det *= U[x][x]
 
-    return L, U
+    return det, L, U
 
 
 def matrixify(matrix_size):
@@ -31,10 +35,8 @@ def set_matrix(sentence):
 
     matrix = matrixify(matrix_size)
 
-    pass
-
     return matrix
 
 
 sentence = "helloworld"
-key_public, key_private = generate_key(10, set_matrix(sentence))
+key_public_det, key_public_matrix, key_private = generate_key(10, set_matrix(sentence))
