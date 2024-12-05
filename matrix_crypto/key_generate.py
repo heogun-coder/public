@@ -1,3 +1,4 @@
+
 def generate_key(matrix_size, matrix):
 
     L = matrixify(matrix_size)
@@ -34,7 +35,6 @@ def set_matrix(sentence):
     matrix_size = len(sentence)
 
     matrix = matrixify(matrix_size)
-
     return matrix
 
 
