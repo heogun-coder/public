@@ -1,4 +1,3 @@
-
 def generate_key(matrix_size, matrix):
 
     L = matrixify(matrix_size)
@@ -31,12 +30,30 @@ def matrixify(matrix_size):
     return matrix
 
 
-def set_matrix(sentence):
-    matrix_size = len(sentence)
+def get_sqrt(n):
+    i = 1
+    while 1:
+        if n / (i**2) <= 1:
+            return i
+        i += 1
 
+
+def set_matrix(sentence):
+    matrix_size = get_sqrt(len(sentence))
     matrix = matrixify(matrix_size)
+
+    for x in range(matrix_size):
+        for y in range(matrix_size):
+            matrix[x][y] = sentence[matrix_size * x + y]
     return matrix
 
 
-sentence = "helloworld"
-key_public_det, key_public_matrix, key_private = generate_key(10, set_matrix(sentence))
+sentence = [1, 2, 3, 2, 3, 4, 3, 6, 7]
+print(len(sentence))
+
+key_public_det, key_public_matrix, key_private = generate_key(
+    get_sqrt(len(sentence)), set_matrix(sentence)
+)
+
+
+print(key_public_matrix, key_public_det, key_private)
