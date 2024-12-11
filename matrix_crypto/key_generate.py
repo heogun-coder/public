@@ -64,20 +64,21 @@ def set_matrix(sentence):
     return matrix
 
 
+"""
 def get_square_matrix(matrix):
-    return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+    return (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0])
 
 
-def get_sub_matrix(matrix, i, j):
-    sub_matrix = matrixify(len(matrix) - 1)
+def get_sub_matrix(matrix, i, j, length):
+    sub_matrix = matrixify(length)
     for x in range(i):
-        for y in range(j):
+        for y in range(0, j):
             sub_matrix[x][y] = matrix[x][y]
-        for y in range(j + 1, len(matrix)):
+        for y in range(j + 1, length):
             sub_matrix[x][y - 1] = matrix[x][y]
 
-    for x in range(i, len(matrix)):
-        for y in range(j):
+    for x in range(i, length):
+        for y in range(0, j):
             sub_matrix[x - 1][y] = matrix[x][y]
         for y in range(j + 1, len(matrix)):
             sub_matrix[x - 1][y - 1] = matrix[x][y]
@@ -85,8 +86,7 @@ def get_sub_matrix(matrix, i, j):
     return sub_matrix
 
 
-def det(matrix):
-    matrix_size = len(matrix)
+def det(matrix, matrix_size):
     result = 0
     y = 0
     index = 0
@@ -96,12 +96,16 @@ def det(matrix):
                 index = 1
             else:
                 index = -1
-            result += (matrix[x][y]) * index * det(get_sub_matrix(matrix, x, y))
+            result += (
+                (matrix[x][y])
+                * index
+                * det(get_sub_matrix(matrix, x, y, matrix_size), matrix_size - 1)
+            )
     elif matrix_size == 2:
         return get_square_matrix(matrix)
 
     return result
-
+"""
 
 sentence = [1, 2, 3, 2, 3, 4, 6, 5, 7]  # 문자열 행렬로 변환
 # 행렬곱 최적화
@@ -114,7 +118,7 @@ key_public_det, key_public_matrix, key_private = generate_key(
 
 
 print(key_public_matrix, key_private, key_public_det)
+key_public_matrix[0][0] = 0
 
 
 print(solve(key_public_matrix, key_private))
-print(det(key_public_matrix), det(key_private))
