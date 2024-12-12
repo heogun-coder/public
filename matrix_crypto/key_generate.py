@@ -30,7 +30,6 @@ def solve(key_public, key_private):
     A = [0 for _ in range(m)]
     for x in range(m):
         A[x] = [0 for _ in range(r)]
-
     for x in range(m):
         for y in range(r):
             for z in range(n):
@@ -60,65 +59,53 @@ def set_matrix(sentence):
 
     for x in range(matrix_size):
         for y in range(matrix_size):
-            matrix[x][y] = sentence[matrix_size * x + y]  # ord함수 추가
+            if type(sentence[matrix_size * x + y]) == int:
+                matrix[x][y] = sentence[matrix_size * x + y]  # ord함수 추가
+            elif type(sentence[matrix_size * x + y]) == str:
+                matrix[x][y] = ord(sentence[matrix_size * x + y])
     return matrix
 
 
-"""
-def get_square_matrix(matrix):
-    return (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0])
+def encrypt_message(sentence, public_key, randomizer):
+
+    for x in range(len(public_key)):
+        for y in range(len(public_key[0])):
+            public_key[x][y] += randomizer
+
+    print(public_key)
+
+    cipher = solve(sentence, public_key)
+    print(cipher)
+    return cipher
 
 
-def get_sub_matrix(matrix, i, j, length):
-    sub_matrix = matrixify(length)
-    for x in range(i):
-        for y in range(0, j):
-            sub_matrix[x][y] = matrix[x][y]
-        for y in range(j + 1, length):
-            sub_matrix[x][y - 1] = matrix[x][y]
-
-    for x in range(i, length):
-        for y in range(0, j):
-            sub_matrix[x - 1][y] = matrix[x][y]
-        for y in range(j + 1, len(matrix)):
-            sub_matrix[x - 1][y - 1] = matrix[x][y]
-
-    return sub_matrix
+def decrypt_message(cipher, private_key):
+    result = solve(cipher, private_key)
 
 
-def det(matrix, matrix_size):
-    result = 0
-    y = 0
-    index = 0
-    if matrix_size > 2:
-        for x in range(matrix_size):
-            if (x + 1 + y + 1) % 2 == 0:
-                index = 1
-            else:
-                index = -1
-            result += (
-                (matrix[x][y])
-                * index
-                * det(get_sub_matrix(matrix, x, y, matrix_size), matrix_size - 1)
-            )
-    elif matrix_size == 2:
-        return get_square_matrix(matrix)
-
-    return result
-"""
-
-sentence = [1, 2, 3, 2, 3, 4, 6, 5, 7]  # 문자열 행렬로 변환
+key = [[1, 2, 3], [2, 3, 4], [6, 5, 7]]  # 문자열 행렬로 변환
 # 행렬곱 최적화
-key_public_det, key_public_matrix, key_private = generate_key(
-    get_sqrt(len(sentence)), set_matrix(sentence)
-)
+key_public_det, key_public_matrix, key_private = generate_key(len(key), key)
 # 공개키의 임의의 원소를 0으로 처리 -> L' , 수신자는 A' = L'U 행렬 재구성
 # 메세지의 원소에 행렬식 공개키 더하기. 이러고 공개키 곱하기 -> D생성
 # D공개하면 수신자가 개인키 곱하고, A'의 역행렬을 곱해 메세지 복원하기.
 
 
 print(key_public_matrix, key_private, key_public_det)
+
+print(solve(key_public_matrix, key_private))  #!순서 중요
+# print(solve(key_private, key_public_matrix))
+
+
 key_public_matrix[0][0] = 0
 
-
 print(solve(key_public_matrix, key_private))
+
+
+message = "hellworld"
+
+# cipher = encrypt_message(message, key_public_matrix, key_public_det)
+
+# print(cipher)
+
+# decrypt_message(cipher, key_private)
