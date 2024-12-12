@@ -68,14 +68,16 @@ def set_matrix(sentence):
 
 def encrypt_message(sentence, public_key, randomizer):
 
+    temp = matrixify(len(public_key))
+
     for x in range(len(public_key)):
         for y in range(len(public_key[0])):
             public_key[x][y] += randomizer
+            temp[x][y] = ord(sentence[x * len(public_key) + y])
 
-    print(public_key)
+    print(temp)
 
-    cipher = solve(sentence, public_key)
-    print(cipher)
+    cipher = solve(temp, public_key)
     return cipher
 
 
@@ -104,6 +106,8 @@ print(solve(key_public_matrix, key_private))
 
 message = "hellworld"
 
+cipher = encrypt_message(message, key_public_matrix, key_public_det)
+print(cipher)
 # cipher = encrypt_message(message, key_public_matrix, key_public_det)
 
 # print(cipher)
