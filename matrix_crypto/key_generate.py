@@ -53,6 +53,12 @@ def get_sqrt(n):
         i += 1
 
 
+def get_inverse(matrix):
+    result = matrixify(len(matrix))
+
+    return result
+
+
 def set_matrix(sentence):
     matrix_size = get_sqrt(len(sentence))
     matrix = matrixify(matrix_size)
@@ -75,7 +81,8 @@ def encrypt_message(sentence, public_key, randomizer):
             public_key[x][y] += randomizer
             temp[x][y] = ord(sentence[x * len(public_key) + y])
 
-    print(temp)
+    print(f"orded messeage : {temp}")
+    print(f"public key : {public_key}")
 
     cipher = solve(temp, public_key)
     return cipher
@@ -83,6 +90,7 @@ def encrypt_message(sentence, public_key, randomizer):
 
 def decrypt_message(cipher, private_key):
     result = solve(cipher, private_key)
+    return result
 
 
 key = [[1, 2, 3], [2, 3, 4], [6, 5, 7]]  # 문자열 행렬로 변환
@@ -93,23 +101,19 @@ key_public_det, key_public_matrix, key_private = generate_key(len(key), key)
 # D공개하면 수신자가 개인키 곱하고, A'의 역행렬을 곱해 메세지 복원하기.
 
 
-print(key_public_matrix, key_private, key_public_det)
+print("keys : ", key_public_matrix, key_private, key_public_det)
 
-print(solve(key_public_matrix, key_private))  #!순서 중요
-# print(solve(key_private, key_public_matrix))
-
+# print(solve(key_public_matrix, key_private))  #!순서 중요
 
 key_public_matrix[0][0] = 0
 
-print(solve(key_public_matrix, key_private))
+# print(solve(key_public_matrix, key_private))
 
 
 message = "hellworld"
 
 cipher = encrypt_message(message, key_public_matrix, key_public_det)
-print(cipher)
-# cipher = encrypt_message(message, key_public_matrix, key_public_det)
+print(f"cipher : {cipher}")
 
-# print(cipher)
-
-# decrypt_message(cipher, key_private)
+sentence = decrypt_message(cipher, key_private)
+print(f"sentence : {sentence}")

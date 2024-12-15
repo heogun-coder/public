@@ -96,7 +96,7 @@ early_stopping = tf.keras.callbacks.EarlyStopping(
 # 모델 훈련
 history = model.fit(
     train_dataset,
-    epochs=50,
+    epochs=100,
     validation_data=test_dataset,
     callbacks=[reduce_lr, early_stopping],
 )

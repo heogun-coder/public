@@ -5,7 +5,8 @@ from PIL import Image
 import io
 import base64
 import keras
-from tensorflow.python.keras import img_to_array
+
+# from tensorflow.python.keras import img_to_array
 import cv2
 
 app = Flask(__name__)
