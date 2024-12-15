@@ -1,17 +1,11 @@
 import numpy as np
 import time
 
-# from scipy.ndimage import convolve
 
-# Generate a synthetic input matrix (example: 6x6 image)
-input_matrix = np.random.rand(1000, 1000)
-
-# Define a synthetic filter (example: 3x3 filter)
-filter_matrix = np.array([[1, 0, -1], [1, 0, -1], [1, 0, -1]])
+filter_matrix = np.array([[1, 0, -1], [1, 0, -1], [1, 0, -1]])  # KERNAL
 
 
-def convolve_2d(input_matrix, filter_matrix, stride):
-    """Perform 2D convolution with stride."""
+def convolve_2d(input_matrix, filter_matrix, stride):  # 합성곱
     input_size = input_matrix.shape[0]
     filter_size = filter_matrix.shape[0]
     output_size = (input_size - filter_size) // stride + 1
@@ -28,8 +22,7 @@ def convolve_2d(input_matrix, filter_matrix, stride):
     return output
 
 
-def max_pooling(matrix, pool_size, stride):
-    """Perform max pooling."""
+def max_pooling(matrix, pool_size, stride):  # 최대 풀링
     input_size = matrix.shape[0]
     output_size = (input_size - pool_size) // stride + 1
     pooled = np.zeros((output_size, output_size))
@@ -44,23 +37,32 @@ def max_pooling(matrix, pool_size, stride):
     return pooled
 
 
-# Evaluate different stride values
-strides = [1, 2, 3, 4]
-results = []
+res = [0, 0, 0, 0]
+ti = [0, 0, 0, 0]
+for x in range(100):
 
-for stride in strides:
-    # Perform convolution
-    start = time.time()
-    conv_output = convolve_2d(input_matrix, filter_matrix, stride)
-    end = time.time()
-    # Perform max pooling (example: 2x2 pool with stride=2)
-    pooled_output = max_pooling(conv_output, pool_size=2, stride=2)
-    # Calculate variance as a proxy for feature richness
-    variance = np.var(pooled_output)
-    results.append((stride, variance, (end - start) * 10000))
+    input_matrix = np.random.rand(300, 300)  # INPUT
 
-# Find the stride with the highest variance
-optimal_stride = max(results, key=lambda x: x[1])
+    strides = [1, 2, 3, 4]
+    results = []
 
-print("Stride results (stride, variance, time):", results)
-print("Optimal stride:", optimal_stride[0])
+    for stride in strides:
+
+        start = time.time()
+        conv_output = convolve_2d(input_matrix, filter_matrix, stride)
+        end = time.time()
+        pooled_output = max_pooling(conv_output, pool_size=2, stride=2)
+        t = end - start
+        variance = np.var(pooled_output)
+        # results.append((stride, variance.round(5), round(t, 5)))
+
+        res[stride - 1] += variance.round(5)
+        ti[stride - 1] += round(t, 5)
+
+for x in range(0, 4):
+    print(f"stride = {x + 1}")
+    print(f"variance : {res[x]}, time : {ti[x]}")
+
+
+# print("Stride results (stride, variance, time):", results)
+# print("Optimal stride:", optimal_stride[0])

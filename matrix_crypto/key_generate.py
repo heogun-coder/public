@@ -110,7 +110,7 @@ key_public_matrix[0][0] = 0
 # print(solve(key_public_matrix, key_private))
 
 
-message = "hellworld"
+message = "Iloveyou!"
 
 cipher = encrypt_message(message, key_public_matrix, key_public_det)
 print(f"cipher : {cipher}")
