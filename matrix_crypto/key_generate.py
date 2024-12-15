@@ -90,6 +90,9 @@ def encrypt_message(sentence, public_key, randomizer):
 
 def decrypt_message(cipher, private_key):
     result = solve(cipher, private_key)
+
+    pass
+
     return result
 
 
@@ -110,7 +113,7 @@ key_public_matrix[0][0] = 0
 # print(solve(key_public_matrix, key_private))
 
 
-message = "Iloveyou!"
+message = "Ilikeyou!"
 
 cipher = encrypt_message(message, key_public_matrix, key_public_det)
 print(f"cipher : {cipher}")
