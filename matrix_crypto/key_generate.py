@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def generate_key(matrix_size, matrix):
 
     L = matrixify(matrix_size)
@@ -53,10 +56,73 @@ def get_sqrt(n):
         i += 1
 
 
-def get_inverse(matrix):
-    result = matrixify(len(matrix))
+def LU_decomposition(A):
+    """
+    LU 분해 함수 (행렬 A를 L, U로 분해)
+    A = L * U 형태로 반환.
+    """
+    n = A.shape[0]
+    L = np.zeros((n, n))
+    U = np.zeros((n, n))
 
-    return result
+    for i in range(n):
+        L[i, i] = 1  # L의 대각선은 1로 설정
+
+        # U의 첫 번째 행을 계산
+        for j in range(i, n):
+            U[i, j] = A[i, j] - np.sum(L[i, :i] * U[:i, j])
+
+        # L의 첫 번째 열을 계산
+        for j in range(i + 1, n):
+            L[j, i] = (A[j, i] - np.sum(L[j, :i] * U[:i, i])) / U[i, i]
+
+    return L, U
+
+
+def forward_substitution(L, b):
+    """
+    L * x = b 형태의 선형 시스템을 풀어 x를 구하는 함수 (L은 하삼각행렬)
+    """
+    n = len(b)
+    x = np.zeros_like(b)
+
+    for i in range(n):
+        x[i] = b[i] - np.sum(L[i, :i] * x[:i])
+
+    return x
+
+
+def backward_substitution(U, y):
+    """
+    U * x = y 형태의 선형 시스템을 풀어 x를 구하는 함수 (U는 상삼각행렬)
+    """
+    n = len(y)
+    x = np.zeros_like(y)
+
+    for i in range(n - 1, -1, -1):
+        x[i] = (y[i] - np.sum(U[i, i + 1 :] * x[i + 1 :])) / U[i, i]
+
+    return x
+
+
+def inverse_matrix(A):
+    L, U = LU_decomposition(A)
+    n = A.shape[0]
+    inv_A = np.zeros_like(A)
+
+    # 단위행렬을 역행렬로 변환하는 방법
+    for i in range(n):
+        # 단위행렬의 i번째 열 벡터
+        e_i = np.zeros(n)
+        e_i[i] = 1
+
+        # L * y = e_i를 풀어 y 구하기
+        y = forward_substitution(L, e_i)
+
+        # U * x = y를 풀어 x 구하기
+        inv_A[:, i] = backward_substitution(U, y)
+
+    return inv_A
 
 
 def set_matrix(sentence):
@@ -88,12 +154,20 @@ def encrypt_message(sentence, public_key, randomizer):
     return cipher
 
 
-def decrypt_message(cipher, private_key):
+def decrypt_message(cipher, private_key, matrix, public_det):
     result = solve(cipher, private_key)
+    inv = inverse_matrix(matrix)
+    result = solve(result, inv)
+    for x in range(len(cipher)):
+        for y in range(len(cipher[0])):
+            result[x][y] -= public_det
 
-    pass
+    sentence = matrixify(len(cipher))
+    for x in range(len(cipher)):
+        for y in range(len(cipher[0])):
+            sentence[x][y] = chr(result[x][y])
 
-    return result
+    return sentence
 
 
 key = [[1, 2, 3], [2, 3, 4], [6, 5, 7]]  # 문자열 행렬로 변환
@@ -111,12 +185,12 @@ print("keys : ", key_public_matrix, key_private, key_public_det)
 key_public_matrix[0][0] = 0
 
 # print(solve(key_public_matrix, key_private))
-
+key = solve(key_public_matrix, key_private)
 
 message = "Ilikeyou!"
 
 cipher = encrypt_message(message, key_public_matrix, key_public_det)
 print(f"cipher : {cipher}")
 
-sentence = decrypt_message(cipher, key_private)
+sentence = decrypt_message(cipher, key_private, key, key_public_det)
 print(f"sentence : {sentence}")
