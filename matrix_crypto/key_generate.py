@@ -144,7 +144,7 @@ def encrypt_message(sentence, public_key, randomizer):
 
     for x in range(len(public_key)):
         for y in range(len(public_key[0])):
-            public_key[x][y] += randomizer
+            # public_key[x][y] += randomizer
             temp[x][y] = ord(sentence[x * len(public_key) + y])
 
     print(f"orded messeage : {temp}")
@@ -170,7 +170,7 @@ def decrypt_message(cipher, private_key, matrix, public_det):
     return sentence
 
 
-key = [[1, 2, 3], [2, 3, 4], [6, 5, 7]]  # 문자열 행렬로 변환
+key = [[1, 2, 3], [2, 5, 5], [6, 5, 7]]  # 문자열 행렬로 변환
 # 행렬곱 최적화
 key_public_det, key_public_matrix, key_private = generate_key(len(key), key)
 # 공개키의 임의의 원소를 0으로 처리 -> L' , 수신자는 A' = L'U 행렬 재구성
@@ -182,15 +182,30 @@ print("keys : ", key_public_matrix, key_private, key_public_det)
 
 # print(solve(key_public_matrix, key_private))  #!순서 중요
 
-key_public_matrix[0][0] = 0
+key_public_matrix[1][1] = 0
 
 # print(solve(key_public_matrix, key_private))
 key = solve(key_public_matrix, key_private)
+for x in range(len(key)):
+    for y in range(len(key[0])):
+        key[x][y] += key_public_det
+
 
 message = "Ilikeyou!"
 
 cipher = encrypt_message(message, key_public_matrix, key_public_det)
 print(f"cipher : {cipher}")
 
-sentence = decrypt_message(cipher, key_private, key, key_public_det)
-print(f"sentence : {sentence}")
+print(f"M * L'* U = {solve(cipher,key_private)}")
+print("key( = L'U + det(A)) : ", key)
+key_inv = [
+    [1 / 27, -19 / 54, 1 / 3],
+    [16 / 27, -7 / 54, -2 / 3],
+    [-20 / 27, 29, 54, 1 / 3],
+]
+
+print(f"half-interpreted : {solve(solve(cipher, key_private), key_inv)}")
+
+
+# sentence = decrypt_message(cipher, key_private, key, key_public_det)
+# print(f"sentence : {sentence}")
