@@ -1,21 +1,47 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, request, jsonify, render_template
+import requests
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route("/")
-def home():
+def index():
     return render_template("index.html")
 
 
-@app.route("/api/data", methods=["GET", "POST"])
-def api_data():
-    if request.method == "POST":
+@app.route("/send", methods=["POST"])
+def send():
+    try:
+        # 클라이언트에서 받은 데이터
         data = request.json
-        print("Received data:", data)
-        return jsonify({"status": "success", "message": "Data received"}), 200
-    return jsonify({"message": "Send a POST request with JSON data."}), 200
+        if not data:
+            return jsonify({"error": "No data received"}), 400
+
+        # jsonplaceholder로 데이터 전송
+        response = requests.post(
+            "https://jsonplaceholder.typicode.com/posts", json=data
+        )
+        if response.status_code == 201:
+            return (
+                jsonify(
+                    {
+                        "message": "Data successfully sent to JSONPlaceholder!",
+                        "data_sent": data,
+                        "server_response": response.json(),
+                    }
+                ),
+                201,
+            )
+        else:
+            return (
+                jsonify({"error": "Failed to send data", "details": response.text}),
+                response.status_code,
+            )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, ssl_context=("cert.pem", "key.pem"))
+    app.run(host="192.168.0.17", port=5000, ssl_context=("cert.pem", "key.pem"))

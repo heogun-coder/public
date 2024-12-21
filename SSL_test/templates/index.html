@@ -3,11 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flask HTTPS Server</title>
-    <script src="script.js" defer></script>
+    <title>Flask JSON Sender</title>
+    <script src="/static/script.js" defer></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        #response {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Flask HTTPS Server</h1>
-    <button id="sendRequest">Send POST Request</button>
+    <h1>Send Data to JSONPlaceholder</h1>
+    <form id="data-form">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required>
+        <br><br>
+        <label for="body">Body:</label>
+        <textarea id="body" name="body" required></textarea>
+        <br><br>
+        <button type="submit">Send</button>
+    </form>
+    <div id="response"></div>
 </body>
 </html>
