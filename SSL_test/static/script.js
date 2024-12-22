@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM fully loaded and parsed");
     const form = document.getElementById("data-form");
     const responseDiv = document.getElementById("response");
-
+    
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
         console.log("Form submitted");
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 데이터 전송
         try {
-            const response = await fetch("https://192.168.0.17:5000/send", {
+            const response = await fetch("https://127.0.0.1:5000/send", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
