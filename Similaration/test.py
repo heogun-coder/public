@@ -72,23 +72,21 @@ def get_newton_raphson(f1, f2, x, y):
         )
         return [new_x, new_y]
     except:
-        # 계산 중 오류 발생시 약간 변경된 값 반환
         return [x + 0.1, y + 0.1]
 
 
 real1, real2 = [2, 2], [-2, -2]
-(x, y) = (0.5, 0.5)  # 초기값 변경
+(x, y) = (0.5, 0.5)
 epoch = 0
-tolerance = 1e-4  # 수렴 판정 기준
+tolerance = 1e-4
 
 while epoch < 100:
     (a, b) = get_newton_raphson(f1, f2, x, y)
 
-    # 실제 해와의 차이로 수렴 여부 확인
     if (abs(a - real1[0]) < tolerance and abs(b - real1[1]) < tolerance) or (
         abs(a - real2[0]) < tolerance and abs(b - real2[1]) < tolerance
     ):
-        print(f"수렴했습니다! 결과: x = {a:.6f}, y = {b:.6f}")
+        print(f"수렴했습니다! 결과: x = {a:.4f}, y = {b:.4f}")
         break
 
     print(f"Epoch {epoch}:")
