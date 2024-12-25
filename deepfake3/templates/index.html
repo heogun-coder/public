@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>얼굴 블렌딩</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>얼굴 블렌딩</h1>
+        <div class="upload-container">
+            <div class="upload-box">
+                <h2>소스 이미지</h2>
+                <input type="file" id="source-image" accept="image/*">
+                <div class="preview" id="source-preview"></div>
+            </div>
+            <div class="upload-box">
+                <h2>타겟 이미지</h2>
+                <input type="file" id="target-image" accept="image/*">
+                <div class="preview" id="target-preview"></div>
+            </div>
+        </div>
+        <button id="blend-button">블렌딩 시작</button>
+        <div class="result-container">
+            <h2>결과</h2>
+            <div class="preview" id="result-preview"></div>
+        </div>
+        <div id="error-message"></div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

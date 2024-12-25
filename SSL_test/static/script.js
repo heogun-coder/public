@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 데이터 전송
         try {
-            const response = await fetch("https://127.0.0.1:5000/send", {
+            const response = await fetch("https://192.168.0.17:5000/send", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
