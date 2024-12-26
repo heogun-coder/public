@@ -10,16 +10,14 @@ class SequenceWeatherPredictor:
     def __init__(self):
         self.model = RandomForestClassifier(n_estimators=100, random_state=42)
         self.scaler = StandardScaler()
-        # 3시간 단위로 변경
-        self.sequence_steps = 16  # 2일 = 48시간 = 16개의 3시간 단위
-        self.prediction_steps = 8  # 1일 = 24시간 = 8개의 3시간 단위
+        # 3시간
+        self.sequence_steps = 16  # 2일 = 48시간 = 16 * 3시간
+        self.prediction_steps = 8  # 1일 = 24시간 = 8 * 3시간
 
     def prepare_sequence_data(self, data):
-        """48시간(16개의 3시간 단위)치 데이터를 하나의 특성 벡터로 만듭니다."""
         sequences = []
         labels = []
 
-        # 시간순으로 정렬
         data = data.sort_values("datetime")
 
         print(f"데이터 시작 시간: {data['datetime'].min()}")
@@ -29,11 +27,9 @@ class SequenceWeatherPredictor:
             f"필요한 최소 데이터 포인트 수: {self.sequence_steps + self.prediction_steps}"
         )
 
-        # 시퀀스 데이터 생성 (3시간 단위)
         for i in range(len(data) - self.sequence_steps - self.prediction_steps + 1):
-            # 2일치 데이터 (16개 포인트)
+            # 2일치
             sequence = data.iloc[i : i + self.sequence_steps]
-            # 다음 1일치 데이터 (8개 포인트)의 날씨 모드(최빈값)
             target_weather = data.iloc[
                 i
                 + self.sequence_steps : i
@@ -41,7 +37,6 @@ class SequenceWeatherPredictor:
                 + self.prediction_steps
             ]["weather"].mode()[0]
 
-            # 특성 벡터 생성
             feature_vector = []
             for _, step in sequence.iterrows():
                 feature_vector.extend(
@@ -66,7 +61,6 @@ class SequenceWeatherPredictor:
         return np.array(sequences), np.array(labels)
 
     def prepare_labels(self, labels):
-        """날씨 레이블을 숫자로 변환합니다."""
         weather_mapping = {
             "Clear": 0,
             "Rain": 1,
@@ -82,7 +76,6 @@ class SequenceWeatherPredictor:
         return np.array([weather_mapping.get(label, 3) for label in labels])
 
     def train(self, data):
-        """모델을 훈련합니다."""
         print(f"전체 데이터 수: {len(data)}")
 
         # 시퀀스 데이터 준비
@@ -107,14 +100,12 @@ class SequenceWeatherPredictor:
         print("\n분류 보고서:")
         print(classification_report(y, y_pred))
 
-    def predict(self, sequence_data):
-        """48시간치 데이터로 다음 24시간의 날씨를 예측합니다."""
+    def predict(self, sequence_data):  # 훈련
         if len(sequence_data) != self.sequence_steps:
             raise ValueError(
                 f"입력 데이터는 {self.sequence_steps}개의 3시간 단위 데이터여야 합니다."
             )
 
-        # 특성 벡터 생성
         feature_vector = []
         for _, step in sequence_data.iterrows():
             feature_vector.extend(
@@ -126,7 +117,7 @@ class SequenceWeatherPredictor:
                 ]
             )
 
-        # 스케일링 및 예측
+        # 예측
         X_scaled = self.scaler.transform([feature_vector])
         prediction = self.model.predict(X_scaled)
         return prediction[0]

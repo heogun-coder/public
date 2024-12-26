@@ -44,11 +44,19 @@ def get_inverse_matrix(A):
     L, U = LU_decomposition(A)
     L_inv = [[0 for _ in range(len(L))] for _ in range(len(L))]
     U_inv = [[0 for _ in range(len(U))] for _ in range(len(U))]
+
+    # 행렬식이 0에 가까운지 확인
+    det = U[0][0] * U[1][1] - U[0][1] * U[1][0]
+    if abs(det) < 1e-10:  # 행렬식이 너무 작으면
+        raise ValueError("행렬식이 0에 가깝습니다")
+
     for i in range(len(L)):
         L_inv[i][i] = 1 / L[i][i]
         for j in range(i + 1, len(L)):
             L_inv[j][i] = -sum(L[j][k] * L_inv[k][i] for k in range(i)) / L[i][i]
     for i in range(len(U)):
+        if abs(U[i][i]) < 1e-10:  # 대각 원소가 너무 작으면
+            raise ValueError("대각 원소가 0에 가깝습니다")
         U_inv[i][i] = 1 / U[i][i]
         for j in range(i + 1, len(U)):
             U_inv[j][i] = -sum(U[j][k] * U_inv[k][i] for k in range(i)) / U[i][i]
@@ -72,16 +80,32 @@ def get_newton_raphson(f1, f2, x, y):
         )
         return [new_x, new_y]
     except:
-        return [x + 0.1, y + 0.1]
+        return [x, y]
 
+
+import matplotlib.pyplot as plt
 
 real1, real2 = [2, 2], [-2, -2]
-(x, y) = (0.5, 0.5)
+(x, y) = (0, 1)
 epoch = 0
 tolerance = 1e-4
 
+# 오차율을 저장할 리스트
+errors_real1_x = []
+errors_real1_y = []
+errors_real2_x = []
+errors_real2_y = []
+epochs = []
+
 while epoch < 100:
     (a, b) = get_newton_raphson(f1, f2, x, y)
+
+    # 오차율 저장
+    errors_real1_x.append((real1[0] - a) / real1[0])
+    errors_real1_y.append((real1[1] - b) / real1[1])
+    errors_real2_x.append((real2[0] - a) / real2[0])
+    errors_real2_y.append((real2[1] - b) / real2[1])
+    epochs.append(epoch)
 
     if (abs(a - real1[0]) < tolerance and abs(b - real1[1]) < tolerance) or (
         abs(a - real2[0]) < tolerance and abs(b - real2[1]) < tolerance
@@ -103,3 +127,27 @@ while epoch < 100:
 
 if epoch == 100:
     print("100회 반복 후에도 수렴하지 않았습니다.")
+
+# 그래프 그리기
+plt.figure(figsize=(12, 6))
+
+plt.subplot(1, 2, 1)
+plt.plot(epochs, errors_real1_x, "r-", label="x error")
+plt.plot(epochs, errors_real1_y, "b-", label="y error")
+plt.title("(2,2) error rate")
+plt.xlabel("Epoch")
+plt.ylabel("Error Rate")
+plt.grid(True)
+plt.legend()
+
+plt.subplot(1, 2, 2)
+plt.plot(epochs, errors_real2_x, "r-", label="x error")
+plt.plot(epochs, errors_real2_y, "b-", label="y error")
+plt.title("(-2,-2) error rate")
+plt.xlabel("Epoch")
+plt.ylabel("Error Rate")
+plt.grid(True)
+plt.legend()
+
+plt.tight_layout()
+plt.show()

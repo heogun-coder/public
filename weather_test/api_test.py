@@ -1,5 +1,3 @@
-# application programming interface : API
-
 import requests
 import pandas as pd
 from datetime import datetime, timedelta
@@ -11,7 +9,7 @@ class WeatherDataCollector:
     def __init__(self):
         self.base_url = "http://api.openweathermap.org/data/2.5"
         self.api_key = "9fc8793cb0c2aeae66c21d1a9a3473eb"
-        self.city_id = "1835848"  # 서울의 city ID
+        self.city_id = "1835848"  # 서울
 
     def get_current_weather(self):
         """현재 날씨 데이터를 수집합니다."""
@@ -19,8 +17,8 @@ class WeatherDataCollector:
         params = {
             "id": self.city_id,
             "appid": self.api_key,
-            "units": "metric",  # 섭씨 온도 사용
-            "lang": "kr",  # 한글 날씨 설명
+            "units": "metric",  # 섭씨 온도
+            "lang": "kr",
         }
 
         response = requests.get(url, params=params)
@@ -34,7 +32,7 @@ class WeatherDataCollector:
             "appid": self.api_key,
             "units": "metric",
             "lang": "kr",
-            "cnt": 40,  # 최대 데이터 포인트 요청
+            "cnt": 40,
         }
 
         response = requests.get(url, params=params)
@@ -45,7 +43,6 @@ class WeatherDataCollector:
         if "list" not in data:
             raise Exception(f"잘못된 API 응답: {data}")
 
-        # 날씨 데이터 정제
         weather_data = []
         for item in data["list"]:
             weather_data.append(
@@ -61,14 +58,14 @@ class WeatherDataCollector:
             )
 
         df = pd.DataFrame(weather_data)
-        df = df.sort_values("datetime")  # 시간순 정렬
+        df = df.sort_values("datetime")
 
         print("\n데이터 수집 정보:")
         print(f"시작 시간: {df['datetime'].min()}")
         print(f"종료 시간: {df['datetime'].max()}")
         print(f"전체 데이터 포인트 수: {len(df)}")
 
-        # 데이터를 75:25로 분할
+        # 데이터 분할
         train_size = int(len(df) * 0.75)
         train_data = df.iloc[:train_size]
         test_data = df.iloc[train_size:]
@@ -76,7 +73,7 @@ class WeatherDataCollector:
         print(f"\n훈련 데이터: {len(train_data)} 포인트")
         print(f"테스트 데이터: {len(test_data)} 포인트")
 
-        if len(train_data) < 24:  # 최소 24개 포인트 필요 (16 + 8)
+        if len(train_data) < 24:  # 최소 24개 = 16+8
             raise Exception(
                 "훈련 데이터가 부족합니다. "
                 f"최소 24개의 데이터 포인트가 필요하지만 현재 {len(train_data)}개입니다."
@@ -85,13 +82,11 @@ class WeatherDataCollector:
         return train_data, test_data
 
     def save_weather_data(self, data, filename):
-        """날씨 데이터를 JSON 파일로 저장합니다."""
         data.to_json(filename, orient="records", force_ascii=False)
         print(f"데이터가 {filename}에 저장되었습니다.")
 
     def generate_test_data(self):
-        """AI 학습용 테스트 데이터를 생성합니다."""
-        # 날씨 조건별 일반적인 기상 상태
+
         weather_conditions = {
             "Clear": {  # 맑음
                 "temp_range": (15, 30),
@@ -119,10 +114,9 @@ class WeatherDataCollector:
             },
         }
 
-        # 테스트 데이터 생성
         test_data = []
         for weather, conditions in weather_conditions.items():
-            for _ in range(50):  # 각 날씨 조건별 50개의 데이터 생성
+            for _ in range(50):
                 data = {
                     "temperature": round(
                         np.random.uniform(*conditions["temp_range"]), 1
