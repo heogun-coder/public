@@ -1,76 +1,91 @@
-import numpy as np
-from scipy.linalg import lu  # Import LU decomposition from SciPy
+def LU_decomposition(A):
+    n = len(A)
+    L = [[0 for _ in range(n)] for _ in range(n)]
+    U = [[A[i][j] for j in range(n)] for i in range(n)]
+    P = [[1 if i == j else 0 for j in range(n)] for i in range(n)]
+
+    # 대각선 요소를 1로 초기화
+    for i in range(n):
+        L[i][i] = 1
+
+    # 각 열에 대해
+    for i in range(n):
+        # 피봇 선택 (i번째 열에서 가장 큰 절댓값을 가진 행 찾기)
+        pivot = abs(U[i][i])
+        pivot_row = i
+        for j in range(i + 1, n):
+            if abs(U[j][i]) > pivot:
+                pivot = abs(U[j][i])
+                pivot_row = j
+
+        # 필요한 경우 행 교환
+        if pivot_row != i:
+            # U 행렬 교환
+            U[i], U[pivot_row] = U[pivot_row], U[i]
+            # P 행렬 교환
+            P[i], P[pivot_row] = P[pivot_row], P[i]
+            # L 행렬에서 이전 단계까지 계산된 부분 교환
+            for k in range(i):
+                L[i][k], L[pivot_row][k] = L[pivot_row][k], L[i][k]
+
+        # 가우스 소거법 수행
+        for j in range(i + 1, n):
+            if U[i][i] != 0:  # 0으로 나누는 것 방지
+                factor = U[j][i] / U[i][i]
+                L[j][i] = factor
+                for k in range(i, n):
+                    U[j][k] -= factor * U[i][k]
+
+    # 행렬식 계산
+    determinant = 1
+    for i in range(n):
+        determinant *= U[i][i]
+
+    return L, U, determinant, P
 
 
-def generate_keys(size):
-    """Generate keys for the encryption scheme."""
-    # Create a random invertible matrix A
-    while True:
-        A = np.random.randint(1, 10, (size, size))
-        if np.linalg.det(A) != 0:  # Ensure A is invertible
-            break
+def get_inverse(matrix):
+    L, U, _, P = LU_decomposition(matrix)
+    n = len(matrix)
+    inverse = [[0 for _ in range(n)] for _ in range(n)]
 
-    # Perform LU decomposition
-    L, U = lu(A)
+    # PA = LU이므로 A^(-1) = U^(-1)L^(-1)P 를 계산
+    for k in range(n):
+        # Step 1: Ly = Pb 풀기 (전진대입)
+        y = [0 for _ in range(n)]
+        b = [P[i][k] for i in range(n)]  # P의 k번째 열
 
-    # Modify L to create L' (non-invertible)
-    L_prime = L.copy()
-    L_prime[0, 0] = 0  # Make L' non-invertible
+        for i in range(n):
+            sum = 0
+            for j in range(i):
+                sum += L[i][j] * y[j]
+            y[i] = b[i] - sum
 
-    return (
-        L_prime,
-        U,
-        int(np.round(np.linalg.det(A))),
-        A,
-    )  # Return public and private keys
+        # Step 2: Ux = y 풀기 (후진대입)
+        x = [0 for _ in range(n)]
+        for i in range(n - 1, -1, -1):
+            sum = 0
+            for j in range(i + 1, n):
+                sum += U[i][j] * x[j]
+            if U[i][i] != 0:  # 0으로 나누는 것 방지
+                x[i] = (y[i] - sum) / U[i][i]
 
+        # k번째 열에 결과 저장
+        for i in range(n):
+            inverse[i][k] = x[i]
 
-def encrypt_message(message, L_prime):
-    """Encrypt a numeric message using L'."""
-    # Convert message to a 3x3 matrix
-    message_matrix = np.array([int(digit) for digit in str(message)]).reshape(3, 3)
-    ciphertext = np.dot(message_matrix, L_prime)
-    return ciphertext
-
-
-def decrypt_message(ciphertext, U, det_A):
-    """Decrypt a numeric message using U and det(A)."""
-    # Compute A' = L'U + det(A) * I
-    size = U.shape[0]
-    L_prime_U = np.dot(ciphertext, U)
-    A_prime = L_prime_U + det_A * np.eye(size)
-
-    # Compute the inverse of A'
-    A_prime_inv = np.linalg.inv(A_prime)
-
-    # Recover the original message
-    recovered_message = np.dot(L_prime_U, A_prime_inv)
-    return np.round(recovered_message).astype(int)
+    for x in range(len(inverse)):
+        for y in range(len(inverse[x])):
+            inverse[x][y] = round(inverse[x][y], 2)
+    return inverse
 
 
-# ========== Main Code Execution ========== #
-if __name__ == "__main__":
-    # Step 1: Generate keys
-    size = 3  # Matrix size for 9-digit numbers
-    L_prime, U, det_A, A = generate_keys(size)
-
-    print("L' (Public Key):")
-    print(L_prime)
-    print("\nU (Private Key):")
-    print(U)
-    print("\ndet(A):")
-    print(det_A)
-
-    # Step 2: Encrypt the message
-    original_message = 123234657  # 9-digit numeric message
-    print("\nOriginal Message:")
-    print(original_message)
-
-    ciphertext = encrypt_message(original_message, L_prime)
-    print("\nCiphertext (Encrypted Message):")
-    print(ciphertext)
-
-    # Step 3: Decrypt the message
-    decrypted_message = decrypt_message(ciphertext, U, det_A)
-    print("\nDecrypted Message (Recovered Message):")
-    print(decrypted_message)
+def multiplication(A, B):
+    result = [[0 for _ in range(len(A))] for _ in range(len(A))]
+    for x in range(len(A)):
+        for y in range(len(A[x])):
+            for z in range(len(A[x])):
+                result[x][y] += A[x][z] * B[z][y]
+            # 소수점 둘째 자리 이하 반올림
+            result[x][y] = round(result[x][y], 2)
+    return result

@@ -1,11 +1,12 @@
 from math import sqrt
+from key_certify import LU_decomposition, get_inverse
 
 
 def generate_key():
     pass
 
 
-def LU_decomposition(A):
+def LU_decomposition1(A):
     L = [0 for _ in range(len(A))]
     U = [0 for _ in range(len(A))]
     for i in range(len(A)):
@@ -70,6 +71,9 @@ def multiplication(A, B):
         for y in range(len(A[x])):
             for z in range(len(A[x])):
                 result[x][y] += A[x][z] * B[z][y]
+            # 소수점 둘째 자리 이하 버림
+            if result[x][y] != int(result[x][y]):
+                result[x][y] = float(format(result[x][y], ".2f"))
     return result
 
 
@@ -83,30 +87,64 @@ def encryption(key_public, message):
     return result
 
 
-def decryption(A, U, R, cipher):
-    result = multiplication(U, cipher)  # U * cipher
+def decryption(L, U, R, cipher):
+    result = multiplication(cipher, U)  # cipher * U
     RU = multiplication(R, U)  # RU
-    result = summation(result, RU, -1)  # U*cipher - RU
+
+    result = summation(result, RU, -1)  # cipher * U - RU
 
     I = [[0 for _ in range(len(result))] for _ in range(len(result))]
     for x in range(len(result)):
         I[x][x] = 1
-    result = summation(result, I, -1)
 
-    D1 = summation(result, R, -1)  # A - R
-    D2 = inverse(RU)  # RU_inverse
+    result = multiplication(result, get_inverse(RU))
+    result = summation(result, I, 1)
+
+    D1 = multiplication(L, U)  # A - R = LU
+    D2 = get_inverse(RU)  # RU_inverse
     D = multiplication(D1, D2)
     D = summation(D, I, 1)
 
-    result = multiplication(cipher, inverse(D))
-    return result
-
-
-def inverse(matrix):
-    result = [[0 for _ in range(len(matrix))] for _ in range(len(matrix))]
-    pass
+    result = multiplication(cipher, get_inverse(D))
 
     return result
+
+
+"""
+def get_inverse(matrix):
+    L, U, _ = LU_decomposition(matrix)
+    n = len(matrix)
+    inverse = [[0 for _ in range(n)] for _ in range(n)]
+
+    # 단위행렬 I를 만듭니다
+    I = [[1 if i == j else 0 for j in range(n)] for i in range(n)]
+
+    # AX = I 를 풀기 위해 각 열마다 계산
+    for k in range(n):
+        # Step 1: Ly = b 풀기 (전진대입)
+        y = [0 for _ in range(n)]
+        b = [I[i][k] for i in range(n)]  # I의 k번째 열
+
+        for i in range(n):
+            sum = 0
+            for j in range(i):
+                sum += L[i][j] * y[j]
+            y[i] = b[i] - sum  # L[i][i]는 1이므로 나눌 필요 없음
+
+        # Step 2: Ux = y 풀기 (후진대입)
+        x = [0 for _ in range(n)]
+        for i in range(n - 1, -1, -1):
+            sum = 0
+            for j in range(i + 1, n):
+                sum += U[i][j] * x[j]
+            x[i] = (y[i] - sum) / U[i][i]
+
+        # k번째 열에 결과 저장
+        for i in range(n):
+            inverse[i][k] = x[i]
+
+    return inverse
+"""
 
 
 def to_matrix(message):
@@ -127,15 +165,18 @@ key = [[1, 2, 3], [2, 3, 4], [6, 5, 1]]
 # print(det(key))
 
 R = [[0, 2, 3], [2, 4, 6], [1, 1, 8]]
-key_public, key_private, determinant = LU_decomposition(key)
-
+key_public_L, key_private, determinant = LU_decomposition1(key)
+# L, U, det
 
 # print_matrix(multiplication(key_public, key_private))
 
-key_public = summation(key_public, R, 1)
+key_public = summation(key_public_L, R, 1)
+# L+R
 print("--key_public--")
 print_matrix(key_public)
 
+# A = LU + R
+# key + R = A
 
 message = "ILOVEYOU!"
 message = to_matrix(message)
@@ -148,5 +189,6 @@ print("--encryption--")
 cipher = encryption(key_public, message)
 print_matrix(cipher)
 
-# print("--decryption--")
-# print_matrix(decryption(key_private, R, cipher))
+print("--decryption--")
+sentence = decryption(key_public_L, key_private, R, cipher)
+print(sentence)
