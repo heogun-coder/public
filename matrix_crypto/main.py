@@ -88,17 +88,17 @@ def encryption(key_public, message):
 
 
 def decryption(L, U, R, cipher):
-    result = multiplication(cipher, U)  # cipher * U
+    result = multiplication(cipher, U)  # cipher * U = MLU + MRU
     RU = multiplication(R, U)  # RU
 
-    result = summation(result, RU, -1)  # cipher * U - RU
+    result = summation(result, RU, -1)  # MLU + MRU - RU = MLU + (M-I)RU
 
     I = [[0 for _ in range(len(result))] for _ in range(len(result))]
     for x in range(len(result)):
         I[x][x] = 1
 
-    result = multiplication(result, get_inverse(RU))
-    result = summation(result, I, 1)
+    result = multiplication(result, get_inverse(RU))  # MLU(U^-1 * R^-1) + M-I
+    result = summation(result, I, 1)  # ML*R^-1 + M
 
     D1 = multiplication(L, U)  # A - R = LU
     D2 = get_inverse(RU)  # RU_inverse
@@ -167,6 +167,10 @@ key = [[1, 2, 3], [2, 3, 4], [6, 5, 1]]
 R = [[0, 2, 3], [2, 4, 6], [1, 1, 8]]
 key_public_L, key_private, determinant = LU_decomposition1(key)
 # L, U, det
+
+print(key_public_L)
+print(key_private)
+print(determinant)
 
 # print_matrix(multiplication(key_public, key_private))
 
