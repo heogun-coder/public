@@ -44,4 +44,4 @@ def send():
 
 
 if __name__ == "__main__":
-    app.run(host="192.168.0.17", port=5000, ssl_context=("cert.pem", "key.pem"))
+    app.run(host="192.168.0.17", port=5000)
