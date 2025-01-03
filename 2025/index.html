@@ -23,6 +23,7 @@
             text-align: center;
             text-shadow: 0 0 10px rgba(255,255,255,0.8);
             animation: glow 2s ease-in-out infinite alternate;
+            display: none;
         }
 
         @keyframes glow {
@@ -65,10 +66,19 @@
                 transform: scale(0.1);
             }
         }
+
+        .message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <div class="text">2025<br>Happy New Year</div>
+    <div class="text">현지야 힘내!!</div>
 
     <script>
         // 파스텔 색상 배열 추가
@@ -252,6 +262,13 @@
 
         // 페이지 로드 시 초기화
         window.addEventListener('load', initialize);
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                const text = document.querySelector('.text');
+                text.style.display = 'block';
+            }
+        });
     </script>
 </body>
 </html>
