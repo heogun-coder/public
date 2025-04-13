@@ -1,5 +1,3 @@
-좋아요. 이 특허의 기술적 가치와 상용화 가능성을 중심으로, 기존 암호 기술과의 차별성도 함께 분석해볼게요. 시간 동기화와 네트워크 지연 기반 보안 방식이 기존 RSA, ECC, 양자 내성 암호 등과 어떻게 다른지도 비교하겠습니다.
-결과 정리되면 바로 알려드릴게요.
 
 # Analysis of Patent KR10-2025-0040591: Time-Synchronized Matrix Key Exchange & Real-Time Rotation
 
